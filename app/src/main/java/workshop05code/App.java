@@ -29,7 +29,7 @@ public class App {
 
     private static final Logger logger = Logger.getLogger(App.class.getName());
     // End code for logging exercise
-    
+
     /**
      * @param args the command line arguments
      */
@@ -56,9 +56,14 @@ public class App {
             String line;
             int i = 1;
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
-                wordleDatabaseConnection.addValidWord(i, line);
-                i++;
+                if (line.matches("^[a-z]{4}$")) {
+                    wordleDatabaseConnection.addValidWord(i, line);
+                    String msg = String.format("Added %s to db", line);
+                    logger.log(Level.INFO, msg);
+                    i++;
+                } else {
+                    System.out.println("Attempt to import " + line + " to db. Not a valid word.");
+                }
             }
 
         } catch (IOException e) {
@@ -82,11 +87,11 @@ public class App {
                     } else {
                         System.out.println("Sorry. This word is NOT in the the list.\n");
                     }
-                }else{
+                } else {
                     System.out.println("The word '" + guess + "' is not a valid word.");
                 }
 
-                System.out.print("Enter a 4 letter word for a guess or q to quit: " );
+                System.out.print("Enter a 4 letter word for a guess or q to quit: ");
                 guess = scanner.nextLine();
             }
         } catch (NoSuchElementException | IllegalStateException e) {
