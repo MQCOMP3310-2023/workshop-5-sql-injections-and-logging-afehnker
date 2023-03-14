@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-//Included for the logging exercise
 import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -16,7 +15,7 @@ import java.util.logging.Logger;
  * @author sqlitetutorial.net
  */
 public class App {
-    // Start code for logging exercise
+
     static {
         // must set before the Logger
         // loads logging.properties from the classpath
@@ -28,7 +27,6 @@ public class App {
     }
 
     private static final Logger logger = Logger.getLogger(App.class.getName());
-    // End code for logging exercise
 
     /**
      * @param args the command line arguments
@@ -38,15 +36,15 @@ public class App {
 
         wordleDatabaseConnection.createNewDatabase("words.db");
         if (wordleDatabaseConnection.checkIfConnectionDefined()) {
-            System.out.println("Wordle created and connected.");
+            logger.log(Level.INFO, "Wordle created and connected.");
         } else {
-            System.out.println("Not able to connect. Sorry!");
+            logger.log(Level.WARNING, "Not able to connect. Sorry!");
             return;
         }
         if (wordleDatabaseConnection.createWordleTables()) {
-            System.out.println("Wordle structures in place.");
+            logger.log(Level.INFO, "Wordle structures in place.");
         } else {
-            System.out.println("Not able to launch. Sorry!");
+            logger.log(Level.WARNING, "Not able to launch. Sorry!");
             return;
         }
 
@@ -62,13 +60,13 @@ public class App {
                     logger.log(Level.INFO, msg);
                     i++;
                 } else {
-                    System.out.println("Attempt to import " + line + " to db. Not a valid word.");
+                    String msg = String.format("Attempt to import %s to the DB. Not a valid word.", line);
+                    logger.log(Level.SEVERE, msg);
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Not able to load . Sorry!");
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Not able to load . Sorry!", e);
             return;
         }
 
@@ -87,15 +85,17 @@ public class App {
                     } else {
                         System.out.println("Sorry. This word is NOT in the the list.\n");
                     }
-                } else {
+                }else{
                     System.out.println("The word '" + guess + "' is not a valid word.");
+                    String msg = String.format("User attempt to guess '%s'. Not a valid word.", guess);
+                    logger.log(Level.WARNING, msg);
                 }
 
                 System.out.print("Enter a 4 letter word for a guess or q to quit: ");
                 guess = scanner.nextLine();
             }
         } catch (NoSuchElementException | IllegalStateException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Could not read.", e);
         }
 
     }
